@@ -4,4 +4,4 @@
 
 
 !.gitignore
-!.config/sway/
+!.config/sway/*
