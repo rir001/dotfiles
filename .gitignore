@@ -2,6 +2,7 @@
 
 # ----
 
-
 !.gitignore
+!.config/
+!.config/sway/
 !.config/sway/config
