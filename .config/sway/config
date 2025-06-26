@@ -14,10 +14,10 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term alacritty
+set $term kitty
 # Your preferred application launcher
-set $menu  ./.config/rofi/launchers/type-3/launcher.sh
-
+set $menu  "./.config/rofi/launchers/type-3/launcher.sh"
+set $emoji "rofi -show emoji -theme ~/.config/rofi/launchers/type-4/style-5.rasi"
 
 set $XDG_SESSION_TYPE wayland
 set $GDK_BACKEND wayland
@@ -25,11 +25,27 @@ set $QT_QPA_PLATFORM wayland
 set $SDL_VIDEODRIVER wayland
 set $MOZ_ENABLE_WAYLAND 1
 set $CLUTTER_BACKEND wayland
+set $ELECTRON_ENABLE_WAYLAND 1
+set $QT_QPA_PLATFORMTHEME qt5ct
+
+
+set $XCURSOR_THEME Bibata-Original-Classic
+set $XCURSOR_SIZE 24
+exec --no-startup-id sh -c 'export XCURSOR_THEME=Bibata-Original-Classic; export XCURSOR_SIZE=24'
+# exec_always {
+#     setxkbmap -option caps:escape
+#     export XCURSOR_THEME=$XCURSOR_THEME
+#     export XCURSOR_SIZE=$XCURSOR_SIZE
+# }
+
+exec ~/.config/sway/env
+
+
 
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
-output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+# output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Example configuration:
 #
@@ -68,14 +84,22 @@ output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 #
 # Basics:
 #
+
     # Start a terminal
-    bindsym $mod+Return exec $term
+    bindsym $mod+Shift+Return exec $term
+    # start a floating terminal
+    bindsym $mod+Return exec $term --title "Floating Terminal"
+    for_window [title="Floating Terminal"] floating enable
+    for_window [title="Floating Terminal"] resize set 40ppt 40ppt
+    for_window [title="Floating Terminal"] move position center
 
     # Kill focused window
     bindsym $mod+period kill
 
     # Start your launcher
     bindsym $mod+comma exec $menu
+    # Start your emoji picker
+    bindsym $mod+Shift+comma exec $emoji
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -212,8 +236,6 @@ bindsym $mod+r mode "resize"
 #
     # Special keys to adjust volume via PulseAudio and notify-send
 
-
-
     bindsym --locked XF86AudioRaiseVolume exec "pactl set-sink-volume \@DEFAULT_SINK@ +4% ; wpctl get-volume @DEFAULT_SINK@ | awk '{print $2*100}' > ~/.wobfifo"
     bindsym --locked XF86AudioLowerVolume exec "pactl set-sink-volume \@DEFAULT_SINK@ -4% ; wpctl get-volume @DEFAULT_SINK@ | awk '{print $2*100}' > ~/.wobfifo"
     bindsym --locked XF86AudioMute exec "pactl set-sink-mute \@DEFAULT_SINK@ toggle ; wpctl get-volume @DEFAULT_SINK@ | grep -q MUTED && echo 0 > ~/.wobfifo || wpctl get-volume @DEFAULT_SINK@ | awk '{print $2*100}' > ~/.wobfifo"
@@ -227,6 +249,12 @@ bindsym $mod+r mode "resize"
     # Special key to take a screenshot with grim
     bindsym Mod4+Shift+o exec grim -g "$(slurp)" - | wl-copy
 
+    bindsym --no-repeat XF86Launch3 exec /home/rir/.config/sway/conf/toggle_display.sh
+
+
+    bindsym --no-repeat XF86Launch1 exec rog-control-center
+
+
 # Status Bar:
 bar {
     swaybar_command waybar
@@ -237,10 +265,23 @@ bar {
 }
 
 for_window [app_id="org.keepassxc.KeePassXC"] floating enable
+for_window [app_id="org.gnome.Calculator"] floating enable
+
 for_window [app_id="python3"] floating enable
 
 default_border none
+default_floating_border none
+hide_edge_borders both
 
+client.focused #000000 #000000 #ffffff #cfcfcf #cfcfcf
+client.unfocused #000000 #000000 #919191 #000000 #000000
+client.focused_inactive #000000 #000000 #e0e0e0 #000000 #000000
+
+hide_edge_borders both
+
+
+
+font pango:Hack Nerd Font 10
 
 input type:keyboard {
     xkb_layout latam,latam,us
@@ -254,11 +295,21 @@ input type:touchpad {
     tap 1
 }
 
+exec_always {
+    gsettings set org.gnome.desktop.interface gtk-theme 'Materia-dark-compact'
+    gsettings set org.gnome.desktop.interface icon-theme 'Arc'
+    gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Original-Classic'
+    # gsettings set org.gnome.desktop.interface font-name 'Your-Font-Name'
+}
 
+
+
+
+
+# swaymsg -t get_outputs
 output eDP-1 mode 2880x1800@60.001Hz scale 1.6 pos 0 0
-
+# output DP-2 mode 1920x1080@74.973Hz scale 1
 output DP-2 mode 1920x1080@74.973Hz scale 1
-# output DP-2 mode 1920x1080 scale 1 pos 0, 0
 
 
 bindgesture swipe:right workspace prev
